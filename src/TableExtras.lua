@@ -1,5 +1,14 @@
 local TableExtras = {}
 
+-- Counts the number of elements in a table
+function TableExtras.count(tbl)
+    local count = 0
+    for _, _ in tbl do
+        count += 1
+    end
+    return count
+end
+
 -- Swaps two values in a table
 function TableExtras.swap(tbl, i1, i2)
     local tmp = tbl[i1]
