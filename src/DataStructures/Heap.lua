@@ -1,4 +1,5 @@
-local TableExtras = require(script.Parent.TableExtras)
+local Utils = script:FindFirstAncestorOfClass("ModuleScript")
+local TableExtras = require(Utils:FindFirstChild("TableExtras", true))
 
 local Heap = {}
 Heap.__index = Heap
