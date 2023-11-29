@@ -1,7 +1,7 @@
 local TableExtras = {}
 
--- Counts the number of elements in a table
-function TableExtras.count(tbl: {[any]: any})
+-- Counts the number of elements in a table (Note: Use length operator for arrays)
+function TableExtras.count(tbl: {[any]: any}): number
     local count = 0
     for _, _ in tbl do
         count += 1
@@ -10,22 +10,22 @@ function TableExtras.count(tbl: {[any]: any})
 end
 
 -- Swaps two values in a table
-function TableExtras.swap(tbl: {[any]: any}, i1: any, i2: any)
+function TableExtras.swap(tbl: {[any]: any}, i1: any, i2: any): nil
     local tmp = tbl[i1]
     tbl[i1] = tbl[i2]
     tbl[i2] = tmp
 end
 
--- Reverse an array's values
-function TableExtras.reverse(tbl: {[any]: any})
+-- Reverse a table's values
+function TableExtras.reverse(tbl: {[any]: any}): {[any]: any}
     local size = #tbl
     for index = 1, size // 2 do
         TableExtras.swap(tbl, index, (size + 1) - index)
     end
 end
 
--- Get a value from a table key, or initialize the key with a default value and return it
-function TableExtras.get(tbl: {[any]: any}, key: any, default: any)
+-- Demand a value from a table key, if no value exists at the key then create it
+function TableExtras.demand(tbl: {[any]: any}, key: any, default: any): any
     local value = tbl[key]
     if value == nil then
         tbl[key] = default
@@ -35,8 +35,8 @@ function TableExtras.get(tbl: {[any]: any}, key: any, default: any)
 end
 
 -- Source: https://create.roblox.com/docs/luau/tables#deep-clones
--- Returns a deep copy of a given table
-function TableExtras.deepCopy(tbl)
+-- Creates a deep copy of a given table
+function TableExtras.deepCopy(tbl): {[any]: any}
     local copy = {}
     for key, value in tbl do
         if type(value) == "table" then
