@@ -102,6 +102,29 @@ function TableExtras.reverse(tbl, i: number?, j: number?)
 	return tblClone
 end
 
+-- Counts the number of elements in the given table equal to the specified value
+function TableExtras.frequency(tbl: {[any]: any}, value: any): number
+    local count = 0
+    for _, element in tbl do
+        if element ~= value then continue end
+        count += 1
+    end
+    return count
+end
+
+-- Replaces all occurances of a specified value in a given table with a new value
+-- Returns a cloned table and whether or not any elements were replaced
+function TableExtras.replace(tbl: Table, value: any, newValue: any): (Table, boolean)
+    local tblClone = table.clone(tbl)
+    local replaced = false
+    for index, element in tbl do
+        if element ~= value then continue end
+        replaced = true
+        tblClone[index] = newValue
+    end
+    return tblClone, replaced
+end
+
 -- Demand a value from a table key, if no value exists at the key then create it
 function TableExtras.demand(tbl: Table, key: any, default: any): any
     local value = tbl[key]
