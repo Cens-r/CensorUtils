@@ -103,7 +103,7 @@ function TableExtras.reverse(tbl, i: number?, j: number?)
 end
 
 -- Counts the number of elements in the given table equal to the specified value
-function TableExtras.frequency(tbl: {[any]: any}, value: any): number
+function TableExtras.frequency(tbl: Table, value: any): number
     local count = 0
     for _, element in tbl do
         if element ~= value then continue end
