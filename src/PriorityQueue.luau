@@ -1,6 +1,5 @@
 
-local Utils = script:FindFirstAncestorOfClass("ModuleScript")
-local Queue = require(Utils:FindFirstChild("Queue", true))
+local Queue = require(script.Parent.Queue)
 
 local PriorityQueue = setmetatable({}, Queue)
 PriorityQueue.__index = PriorityQueue
