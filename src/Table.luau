@@ -4,7 +4,7 @@
 local Types = require(script.Parent.SharedTypes)
 
 export type Table<K, V> = Types.Table<K, V>
-export type Array<T> = Types.Array<T>
+type Array<T> = Types.Array<T>
 
 local Table = {}
 

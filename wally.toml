@@ -1,0 +1,13 @@
+[package]
+name = "cens-r/censor-utils"
+description = "Utility modules and data structures for Luau!"
+
+version = "0.2.0"
+license = "MIT"
+
+authors = ["Censor <https://github.com/Cens-r>"]
+
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
