@@ -1,55 +1,103 @@
-local Queue = {}
-Queue.__index = Queue
+--!strict
+--!native
 
--- Queue Constructor
-function Queue.new()
-    local queue = {
-        type = "Queue",
-        Queue = {},
-        BackIndex = 0
+local Types = require(script.Parent.SharedTypes)
+local Array = require(script.Parent.Array)
+
+local Methods = {}
+local Metamethods = {
+    __index = Methods,
+    __len = function (self)
+        return self.__size
+    end
+}
+
+local Queue = setmetatable({}, { __index = Methods })
+export type Queue<T> = typeof(setmetatable({} :: Types.QueueStruct<T>, Metamethods))
+
+function Queue.new(capacity: number?): Queue<any>
+    local array = table.create(capacity or 0)
+    local struct: Types.QueueStruct<any> = {
+        __type = Types.Queue,
+        __capacity = capacity or -1,
+        __size = 0,
+        __front = 0,
+        __back = 0,
+        __array = array :: Types.Array<any>
     }
-    return setmetatable(queue, Queue)
+    return setmetatable(struct, Metamethods)
 end
 
--- Returns whether or not the queue is empty
-function Queue:empty()
-    return (self.BackIndex == 0)
+function Methods.peek<T>(self: Queue<T>): T?
+    return self.__array[self.__front]
 end
 
--- Returns the size of the queue
-function Queue:size()
-    return self.BackIndex
+function Methods.full<T>(self: Queue<T>)
+    return (self.__capacity ~= -1) and (self.__size >= self.__capacity)
 end
 
--- Access the next element in the queue
-function Queue:front()
-    if self:empty() then
-        return warn("Can't get front element: "..self.type.." is empty!")
-    end
-    return self.Queue[1]
+function Methods.wipe<T>(self: Queue<T>)
+    table.clear(self.__array)
+    self.__size = 0
+    self.__front = 0
+    self.__back = 0
 end
 
--- Access the last element in the queue
-function Queue:back()
-    if self:empty() then
-        return warn("Can't get back element: "..self.type.." is empty!")
-    end
-    return self.Queue[self.BackIndex]
+local function increment(value: number, max: number, n: number?): number
+    n = n or 1
+    if max <= 0 then return value + (n :: number) end
+    return (value % max) + (n :: number)
 end
 
--- Adds element to the back of the queue
-function Queue:push(value: any)
-    table.insert(self.Queue, value)
-    self.BackIndex += 1
-end
-
--- Removes element from the front of the queue
-function Queue:pop()
-    if not self:empty() then
-        table.remove(self.Queue, 1)
-        self.BackIndex -= 1
+function Methods.push<T>(self: Queue<T>, value: T)
+    local index = increment(self.__front, self.__capacity)
+    if self:full() then
+        self.__back = increment(self.__back, self.__capacity)
     else
-        warn("Can't pop element: "..self.type.." is empty!")
+        self.__size += 1
+        if self.__back == 0 then
+            self.__back = 1
+        end
+	end
+	self.__front = index
+    self.__array[index] = value
+end
+
+function Methods.pop<T>(self: Queue<T>): T?
+    if self.__size <= 0 then return end
+    local index = self.__back
+    local value = self.__array[index]
+    self.__array[index] = nil
+    self.__size -= 1
+    if self.__size == 0 then
+        self.__front = 0
+        self.__back = 0
+    else
+        self.__back = increment(index, self.__capacity, 1)
+    end
+    return value
+end
+
+function Methods.get<T>(self: Queue<T>): Types.Array<T>
+    local rotated = Array.rotate(self.__array, -self.__front)
+    return Array.strip(rotated)
+end
+
+function Methods.set<T>(self: Queue<T>, content: Types.Array<T>)
+    local upper = #content
+    if upper > 0 then
+        if self.__capacity < 0 then
+            self.__array = table.clone(content)
+            self.__size = upper
+        else
+            local lower = math.max(1, (upper - self.__capacity) + 1)
+            self.__array = table.move(content, lower, upper, 1, {})
+            self.__size = upper - (lower - 1)
+        end
+        self.__front = self.__size
+        self.__back = 1
+    else
+        self:wipe()
     end
 end
 

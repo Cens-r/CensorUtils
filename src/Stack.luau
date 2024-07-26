@@ -1,45 +1,41 @@
-local Stack = {}
-Stack.__index = Stack
+--!strict
 
--- Stack Constructor
-function Stack.new()
-    local stackTable = {
-        type = "Stack",
-        Stack = {},
-        TopIndex = 0
-    }
-    return setmetatable(stackTable, Stack)
-end
+local Types = require(script.Parent.SharedTypes)
 
--- Returns whether or not the stack is empty
-function Stack:empty()
-    return (self.TopIndex == 0)
-end
-
--- Returns the size of the stack
-function Stack:size()
-    return self.TopIndex
-end
-
--- Returns the top element of the stack
-function Stack:top()
-    return self.Stack[self.TopIndex]
-end
-
--- Adds the value to the top of the stack
-function Stack:push(value: any)
-    table.insert(self.Stack, value)
-    self.TopIndex += 1
-end
-
--- Removes the value at the top of the stack
-function Stack:pop()
-    if not self:empty() then
-        table.remove(self.Stack, self.TopIndex)
-        self.TopIndex -= 1
-    else
-        warn("Can't pop element: Stack is empty!")
+local Methods = {}
+local Metamethods = {
+    __index = Methods,
+    __len = function(self)
+        return self.__size
     end
+}
+
+local Stack = setmetatable({}, { __index = Methods })
+export type Stack<T> = typeof(setmetatable({} :: Types.StackStruct<T>, Metamethods))
+
+function Stack.new(): Stack<any>
+    local struct: Types.StackStruct<any> = {
+        __type = Types.Stack,
+        __size = 0,
+        __array = {} :: Types.Array<any>
+    }
+    return setmetatable(struct, Metamethods)
+end
+
+function Methods.peek<T>(self: Stack<T>): T
+    return self.__array[self.__size]
+end
+
+function Methods.push<T>(self: Stack<T>, value: T)
+    self.__size += 1
+    self.__array[self.__size] = value
+end
+
+function Methods.pop<T>(self: Stack<T>): T
+    local value = self.__array[self.__size]
+    self.__array[self.__size] = nil
+    self.__size -= 1
+    return value
 end
 
 return Stack
