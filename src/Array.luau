@@ -15,9 +15,6 @@ Array.BinaryResult = {
     Greater = 1
 }
 
-local BASIC_COMPARE: CompareCallback<any> = function(a, b)
-    return a < b
-end
 local BINARY_COMPARE: BinaryCallback<any, any> = function(a, b)
     if a == b then
         return Array.BinaryResult.Equal
@@ -38,6 +35,16 @@ function Array.strip<T>(array: Array<T>)
         last -= 1
     end
     return table.move(array, first, last, 1, {})
+end
+
+function Array.extend<T>(array: Array<T>, other: Array<T>): Array<T>
+    local offset = #array
+    local clone = table.clone(array)
+    for index, value in other do
+        clone[index + offset] = value
+    end
+    return clone
+    
 end
 
 function Array.reverse<T>(array: Array<T>, start: number?, finish: number?): Array<T>
@@ -67,34 +74,6 @@ function Array.rotate<T>(array: Array<T>, shift: number): Array<T>
 	clone = Array.reverse(clone, size - (shift - 1), size);
 	clone = Array.reverse(clone, 1, size);
 	return clone
-end
-
-local function partition<T>(array: Array<T>, compare: CompareCallback<T>, start: number, finish: number): number
-    local value = array[finish] -- Pivot's Value
-    local i = start - 1
-
-    for j = start, finish do
-        if compare(array[j], value) then
-            i += 1
-            Table.swap(array, i, j)
-        end
-    end
-
-    i += 1
-    Table.swap(array, i, finish)
-    return i -- New Pivot Index
-end
-
-function Array.sort<T>(array: Array<T>, compare: CompareCallback<T>?, start: number?, finish: number?)
-    start = start or 1
-    finish = finish or #array
-    if start > finish then return end
-   
-    compare = compare or BASIC_COMPARE
-
-    local pivot = partition(array, compare :: CompareCallback<T>, start :: number, finish :: number)
-    Array.sort(array, compare, start, pivot - 1)
-    Array.sort(array, compare, pivot + 1, finish)
 end
 
 function Array.find<T, V>(array: Array<T>, value: V, compare: BinaryCallback<V, T>?, start: number?, finish: number?): number?

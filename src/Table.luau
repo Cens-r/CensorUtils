@@ -13,9 +13,7 @@ function Table.get<K, V>(tbl: Table<K, V>, key: K, default: V?): V
 end
 
 function Table.swap<K, V>(tbl: Table<K, V>, key1: K, key2: K)
-    local temp = tbl[key1]
-    tbl[key1] = tbl[key2]
-    tbl[key2] = temp
+    tbl[key1], tbl[key2] = tbl[key2], tbl[key1]
 end
 
 function Table.keys<K, V>(tbl: Table<K, V>): Array<K>
