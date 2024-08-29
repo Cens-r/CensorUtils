@@ -6,7 +6,7 @@ local Table = require(script.Parent.Table)
 
 export type Array<T> = Types.Array<T>
 type CompareCallback<T> = Types.CompareCallback<T>
-type BinaryCallback<V, T> = (a: V, b: T) -> number
+type BinaryCallback<V, T> = (a: V, b: T, i: number) -> number
 
 local Array = {}
 Array.BinaryResult = {
@@ -44,7 +44,6 @@ function Array.extend<T>(array: Array<T>, other: Array<T>): Array<T>
         clone[index + offset] = value
     end
     return clone
-    
 end
 
 function Array.reverse<T>(array: Array<T>, start: number?, finish: number?): Array<T>
@@ -83,7 +82,7 @@ function Array.find<T, V>(array: Array<T>, value: V, compare: BinaryCallback<V, 
 
     while high >= low do
         local mid = (low + high) // 2
-        local result = (compare :: BinaryCallback<V, T>)(value, array[mid])
+        local result = (compare :: BinaryCallback<V, T>)(value, array[mid], mid)
         if result == Array.BinaryResult.Equal then
             return mid
         elseif result == Array.BinaryResult.Greater then

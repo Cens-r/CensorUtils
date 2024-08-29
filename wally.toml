@@ -2,7 +2,7 @@
 name = "cens-r/censor-utils"
 description = "Utility modules and data structures for Luau!"
 
-version = "0.2.1"
+version = "0.2.3"
 license = "MIT"
 
 authors = ["Censor <https://github.com/Cens-r>"]
